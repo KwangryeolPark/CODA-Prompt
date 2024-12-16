@@ -182,11 +182,7 @@ class NormalNN(nn.Module):
                 output = model.forward(input)[:, :self.valid_out_dim]
                 acc = accumulate_acc(output, target, task, acc, topk=(self.top_k,))
             else:
-                mask = target >= task_in[0]
-                mask_ind = mask.nonzero().view(-1) 
-                input, target = input[mask_ind], target[mask_ind]
-
-                mask = target < task_in[-1]
+                mask = target <= task_in[-1]
                 mask_ind = mask.nonzero().view(-1) 
                 input, target = input[mask_ind], target[mask_ind]
                 
