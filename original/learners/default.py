@@ -157,7 +157,7 @@ class NormalNN(nn.Module):
         self.optimizer.step()
         return total_loss.detach(), logits
 
-    def validation(self, dataloader, model=None, task_in = None, task_metric='acc',  verbal = True, task_global=False):
+    def validation(self, dataloader, model=None, task_in = None, task_metric='acc',  verbal = True, task_global=False, return_logits=True):
 
         if model is None:
             model = self.model
@@ -169,6 +169,9 @@ class NormalNN(nn.Module):
 
         orig_mode = model.training
         model.eval()
+        true = []
+        pred = []
+        logits = []
         for i, (input, target, task) in enumerate(dataloader):
 
             if self.gpu:
@@ -195,11 +198,19 @@ class NormalNN(nn.Module):
                         output = model.forward(input)[:, task_in]
                         acc = accumulate_acc(output, target-task_in[0], task, acc, topk=(self.top_k,))
             
+            print()
+            true.append(target.cpu().detach().numpy())
+            pred.append(output.max(1)[1].cpu().detach().numpy())
+            logits.append(output.cpu().detach().numpy())
+            
+            
         model.train(orig_mode)
 
         if verbal:
             self.log(' * Val Acc {acc.avg:.3f}, Total time {time:.2f}'
                     .format(acc=acc, time=batch_timer.toc()))
+        if return_logits:
+            return acc.avg, np.concatenate(true), np.concatenate(pred), np.concatenate(logits)
         return acc.avg
 
     ##########################################

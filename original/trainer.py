@@ -125,10 +125,11 @@ class Trainer:
                         'top_k': self.top_k,
                         'prompt_param':[self.num_tasks,args.prompt_param]
                         }
+        print('learner config:', self.learner_config)
         self.learner_type, self.learner_name = args.learner_type, args.learner_name
         self.learner = learners.__dict__[self.learner_type].__dict__[self.learner_name](self.learner_config)
 
-    def task_eval(self, t_index, local=False, task='acc'):
+    def task_eval(self, t_index, local=False, task='acc', return_logits=False):
 
         val_name = self.task_names[t_index]
         print('validation split name:', val_name)
@@ -137,9 +138,9 @@ class Trainer:
         self.test_dataset.load_dataset(t_index, train=True)
         test_loader  = DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, drop_last=False, num_workers=self.workers)
         if local:
-            return self.learner.validation(test_loader, task_in = self.tasks_logits[t_index], task_metric=task)
+            return self.learner.validation(test_loader, task_in = self.tasks_logits[t_index], task_metric=task, return_logits=return_logits)
         else:
-            return self.learner.validation(test_loader, task_metric=task)
+            return self.learner.validation(test_loader, task_metric=task, return_logits=return_logits)
 
     def train(self, avg_metrics):
     

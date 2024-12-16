@@ -66,7 +66,7 @@ class Logger(object):
 
 if __name__ == '__main__':
     args = get_args(sys.argv[1:])
-
+    
     # determinstic backend
     torch.backends.cudnn.deterministic=True
 

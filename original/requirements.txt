@@ -1,0 +1,8 @@
+timm==0.4.12
+numpy<2.0
+argparse
+pyaml
+pillow
+opencv-python
+torch==2.0.1
+torchvision
