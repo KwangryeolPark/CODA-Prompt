@@ -198,7 +198,6 @@ class NormalNN(nn.Module):
                         output = model.forward(input)[:, task_in]
                         acc = accumulate_acc(output, target-task_in[0], task, acc, topk=(self.top_k,))
             
-            print()
             true.append(target.cpu().detach().numpy())
             pred.append(output.max(1)[1].cpu().detach().numpy())
             logits.append(output.cpu().detach().numpy())
